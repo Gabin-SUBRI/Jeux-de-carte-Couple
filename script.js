@@ -81,48 +81,176 @@ const questions = {
     name: "Défis",
     icon: "🎯",
     list: [
-      "Fais un compliment sincère que tu n'as jamais dit.",
-      "Regarde l'autre dans les yeux 20 secondes sans parler.",
-      "Raconte un souvenir que tu n'as jamais partagé.",
-      "Prends 30 secondes pour décrire exactement ce que tu ressens maintenant.",
-      "Fais un câlin comme si vous ne vous étiez pas vus depuis 1 mois.",
-      "Partage un désir que tu n'oses jamais dire.",
-      "Décris ce que tu admires le plus chez l'autre.",
-      "Dis 3 choses que tu veux vivre avec elle cette année.",
-      "Cache ton visage et laisse l'autre deviner ton expression.",
-      "Imite ton/ta partenaire pendant 10 secondes.",
-      "Offre un compliment physique précis et sincère.",
-      "Partage une chose que tu veux améliorer dans ta façon d'aimer.",
-      "Raconte ton premier souvenir gênant en amour.",
-      "Partage une chose que tu regrettes mais qui t'a appris quelque chose.",
-      "Choisis un mot pour décrire votre relation, explique.",
-      "Partage un rêve que tu veux absolument réaliser.",
-      "Dis ce que tu ressens quand tu la regardes maintenant.",
-      "Chante une phrase d'une chanson qui vous représente.",
-      "Décris le moment où tu as su qu'elle comptait vraiment.",
-      "Donne une qualité que tu veux développer grâce à votre relation.",
+      {
+        text: "Fais un compliment sincère que tu n'as jamais dit.",
+        timer: null,
+      },
+      {
+        text: "Regarde l'autre dans les yeux 20 secondes sans parler.",
+        timer: 20,
+      },
+      { text: "Raconte un souvenir que tu n'as jamais partagé.", timer: null },
+      {
+        text: "Prends 30 secondes pour décrire exactement ce que tu ressens maintenant.",
+        timer: 30,
+      },
+      {
+        text: "Fais un câlin comme si vous ne vous étiez pas vus depuis 1 mois.",
+        timer: null,
+      },
+      { text: "Partage un désir que tu n'oses jamais dire.", timer: null },
+      { text: "Décris ce que tu admires le plus chez l'autre.", timer: null },
+      {
+        text: "Dis 3 choses que tu veux vivre avec elle cette année.",
+        timer: null,
+      },
+      {
+        text: "Cache ton visage et laisse l'autre deviner ton expression.",
+        timer: 10,
+      },
+      { text: "Imite ton/ta partenaire pendant 10 secondes.", timer: 10 },
+      { text: "Offre un compliment physique précis et sincère.", timer: null },
+      {
+        text: "Partage une chose que tu veux améliorer dans ta façon d'aimer.",
+        timer: null,
+      },
+      { text: "Raconte ton premier souvenir gênant en amour.", timer: null },
+      {
+        text: "Partage une chose que tu regrettes mais qui t'a appris quelque chose.",
+        timer: null,
+      },
+      {
+        text: "Choisis un mot pour décrire votre relation, explique.",
+        timer: null,
+      },
+      { text: "Partage un rêve que tu veux absolument réaliser.", timer: null },
+      {
+        text: "Dis ce que tu ressens quand tu la regardes maintenant.",
+        timer: null,
+      },
+      {
+        text: "Chante une phrase d'une chanson qui vous représente.",
+        timer: null,
+      },
+      {
+        text: "Décris le moment où tu as su qu'elle comptait vraiment.",
+        timer: null,
+      },
+      {
+        text: "Donne une qualité que tu veux développer grâce à votre relation.",
+        timer: null,
+      },
+    ],
+  },
+  hot: {
+    name: "Hot",
+    icon: "🔥",
+    list: [
+      "Qu'est-ce qui t'excite le plus chez moi sans être physique ?",
+      "Quel type de moment intime te donne le plus de papillons ?",
+      "Quelle phrase douce ou provocante t'allume toujours ?",
+      "Quelle situation du quotidien te met dans un mood chaud ?",
+      "Quelle est la fantaisie soft que tu aimerais essayer un jour ?",
+      "Quel geste simple te rend instantanément réceptive ?",
+      "Comment aimes-tu que je te regarde quand on est proches ?",
+      "À quel moment de la journée tu es le plus réceptive à un moment intime ?",
+      "Quelle tenue ou style te fait craquer chez moi ?",
+      "Quelle ambiance te met le plus en confiance pour être sensuelle ?",
+      "Qu'est-ce qui te fait perdre tous tes repères (dans le bon sens) ?",
+      "Quel souvenir intime te revient souvent en tête ?",
+      "Quelle est ta zone non évidente qui te rend sensible ?",
+      "Qu'aimerais-tu que j'ose plus souvent ?",
+      "Quel type de baiser te fait fondre le plus ?",
+      "Quelle est une limite que tu aimerais repousser doucement ?",
+      "Quel compliment sensuel te toucherait vraiment ?",
+      "Quelle idée tu trouves sexy mais que tu n'as jamais dite ?",
+      "Qu'est-ce qui te mettrait dans un mood chaud immédiatement ?",
+      "Quel moment intime tu voudrais absolument qu'on vive bientôt ?",
     ],
   },
 };
 
+let timerInterval = null;
+
 function drawCard() {
+  // Arrêter le timer précédent s'il existe
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
   const categories = Object.keys(questions);
   const randomCategory =
     categories[Math.floor(Math.random() * categories.length)];
   const category = questions[randomCategory];
-  const randomQuestion =
+  const randomItem =
     category.list[Math.floor(Math.random() * category.list.length)];
 
+  // Gérer les questions avec ou sans timer
+  let questionText, timerDuration;
+  if (typeof randomItem === "object") {
+    questionText = randomItem.text;
+    timerDuration = randomItem.timer;
+  } else {
+    questionText = randomItem;
+    timerDuration = null;
+  }
+
+  let timerHTML = "";
+  if (timerDuration) {
+    timerHTML = `
+      <div class="timer-container">
+        <div class="timer-circle">
+          <svg class="timer-svg" width="100" height="100">
+            <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+            <circle class="timer-progress" cx="50" cy="50" r="45" id="timerProgress"></circle>
+          </svg>
+          <div class="timer-text" id="timerText">${timerDuration}</div>
+        </div>
+        <button class="timer-btn" onclick="startTimer(${timerDuration})">▶️ Lancer</button>
+      </div>
+    `;
+  }
+
   const cardHTML = `
-                <div class="card ${randomCategory}">
-                    <div class="card-header">
-                        <div class="category-badge">${category.name}</div>
-                        <div class="icon">${category.icon}</div>
-                    </div>
-                    <div class="question">${randomQuestion}</div>
-                    <div class="card-footer">Prenez votre temps pour répondre 💕</div>
-                </div>
-            `;
+    <div class="card ${randomCategory}">
+      <div class="card-header">
+        <div class="category-badge">${category.name}</div>
+        <div class="icon">${category.icon}</div>
+      </div>
+      <div class="question">${questionText}</div>
+      ${timerHTML}
+      <div class="card-footer">Prenez votre temps pour répondre 💕</div>
+    </div>
+  `;
 
   document.getElementById("cardContainer").innerHTML = cardHTML;
+}
+
+function startTimer(duration) {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+
+  let timeLeft = duration;
+  const timerText = document.getElementById("timerText");
+  const timerProgress = document.getElementById("timerProgress");
+  const circumference = 2 * Math.PI * 45;
+
+  timerProgress.style.strokeDasharray = circumference;
+  timerProgress.style.strokeDashoffset = 0;
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerText.textContent = timeLeft;
+
+    const offset = circumference - (timeLeft / duration) * circumference;
+    timerProgress.style.strokeDashoffset = offset;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timerText.textContent = "✓";
+      timerProgress.style.stroke = "#4caf50";
+    }
+  }, 1000);
 }
